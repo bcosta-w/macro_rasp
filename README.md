@@ -109,9 +109,13 @@ Os erros e eventos importantes são registrados no arquivo script_log.txt. Você
 Contribuições são bem-vindas! Para contribuir com este projeto, siga as etapas abaixo:
 
 -- Faça um fork do repositório
+
 -- Crie uma branch para sua feature/bugfix (git checkout -b feature/nova-feature)
+
 -- Faça commit das suas alterações (git commit -am 'Adiciona nova feature')
+
 -- Faça push para a branch (git push origin feature/nova-feature)
+
 -- Abra um Pull Request
 
 Certifique-se de que suas alterações seguem as boas práticas de codificação e inclua testes quando aplicável.
