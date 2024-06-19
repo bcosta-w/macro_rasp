@@ -45,7 +45,7 @@ def login(driver, email, password):
         password_input.send_keys(Keys.RETURN)  # Pressionar Enter para enviar o formulário
 
         # Aguardar o carregamento da página após o login
-        time.sleep(20)
+        time.sleep(40)
 
     except Exception as e:
         logging.error(f"Erro durante o login: {e}")
@@ -91,7 +91,7 @@ while True:
 
         while True:
             try:
-                time.sleep(10)  # Tempo de visualização na aba atual (ajuste conforme necessário)
+                time.sleep(60)  # Tempo de visualização na aba atual (ajuste conforme necessário)
                 driver.get(urls[current_index])  # Recarregar a nova aba ou a mesma URL se não houver mais URLs na lista
                 switch_tabs(driver)
                 current_index = (current_index + 1) % len(urls)
@@ -108,4 +108,4 @@ while True:
         driver.quit()
 
     # Aguarde um pouco antes de reiniciar as rotinas
-    time.sleep(10)
+    time.sleep(15)
