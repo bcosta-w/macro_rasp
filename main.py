@@ -52,7 +52,19 @@ def login(driver, email, password):
     
     return True
 
-# Configurar opções do navegador para rodar no modo headless (sem interface gráfica)
+def open_two_tabs(driver, urls, index):
+    # Abrir duas abas
+    driver.get(urls[index])
+    driver.execute_script("window.open('');")  # Abrir uma nova aba
+    driver.switch_to.window(driver.window_handles[1])
+    driver.get(urls[(index + 1) % len(urls)])  # Carregar a próxima URL na nova aba
+    driver.switch_to.window(driver.window_handles[0])  # Voltar para a primeira aba
+
+def switch_tabs(driver):
+    current_tab = driver.current_window_handle
+    other_tab = driver.window_handles[0] if driver.window_handles[1] == current_tab else driver.window_handles[1]
+    driver.switch_to.window(other_tab)
+
 options = Options()
 options.add_argument('--disable-gpu')
 options.add_argument('--no-sandbox')
@@ -70,17 +82,23 @@ while True:
             raise Exception("Falha ao realizar o login inicial.")
 
         # Loop para realizar ações periódicas
+        current_index = 0
+        open_two_tabs(driver, urls, current_index)
+
         while True:
-            for url in urls:
-                try:
-                    driver.get(url)
-                    time.sleep(10)  # Aguardar o carregamento da página (ajuste conforme necessário)
-                except Exception as e:
-                    logging.error(f"Erro ao acessar {url}: {e}")
-                    logging.info("Tentando relogar e acessar novamente...")
-                    if not login(driver, email, password):
-                        logging.error("Falha ao relogar.")
-                        break
+            try:
+                time.sleep(10)  # Tempo de visualização na aba atual (ajuste conforme necessário)
+                driver.get(urls[current_index])  # Recarregar a nova aba ou a mesma URL se não houver mais URLs na lista
+                switch_tabs(driver)
+                current_index = (current_index + 1) % len(urls)
+                print('index ',{current_index})
+                print('url ',{urls[current_index]})
+            except Exception as e:
+                logging.error(f"Erro ao acessar {urls[current_index]}: {e}")
+                logging.info("Tentando relogar e acessar novamente...")
+                if not login(driver, email, password):
+                    logging.error("Falha ao relogar.")
+                    break
     except Exception as e:
         logging.error(f"Erro inesperado: {e}")
     finally:
@@ -88,4 +106,4 @@ while True:
         driver.quit()
 
     # Aguarde um pouco antes de reiniciar as rotinas
-    time.sleep(30)
+    time.sleep(10)
