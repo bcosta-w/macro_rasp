@@ -66,7 +66,10 @@ sudo chmod +x /usr/local/bin/chromedriver
 ### 5. Clonar o repositório do projeto
 Clone este repositório no seu Raspberry Pi.
 ```
-git clone [https://github.com/bcosta-w/macro_rasp.git]
+git clone https://github.com/bcosta-w/macro_rasp.git
+```
+
+```
 cd seu-projeto
 
 ```
