@@ -91,8 +91,6 @@ while True:
                 driver.get(urls[current_index])  # Recarregar a nova aba ou a mesma URL se não houver mais URLs na lista
                 switch_tabs(driver)
                 current_index = (current_index + 1) % len(urls)
-                print('index ',{current_index})
-                print('url ',{urls[current_index]})
             except Exception as e:
                 logging.error(f"Erro ao acessar {urls[current_index]}: {e}")
                 logging.info("Tentando relogar e acessar novamente...")
