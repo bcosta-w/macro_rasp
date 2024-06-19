@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
@@ -69,8 +70,11 @@ options = Options()
 options.add_argument('--disable-gpu')
 options.add_argument('--no-sandbox')
 
+# Definir o caminho para o chromedriver
+service = Service('/usr/bin/chromedriver')
+
 while True:
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(service=service, options=options)
     try:
         # Ler as configurações e as URLs das páginas a partir do arquivo de configuração
         config, urls = read_config('config.txt')
