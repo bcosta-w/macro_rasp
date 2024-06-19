@@ -55,10 +55,8 @@ sudo apt install chromium-browser
 Baixe o ChromeDriver compatível com a versão do seu Chromium.
 
 ```
-wget https://chromedriver.storage.googleapis.com/$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
-unzip chromedriver_linux64.zip
-sudo mv chromedriver /usr/local/bin/
-sudo chmod +x /usr/local/bin/chromedriver
+sudo apt install chromium-chromedriver
+
 
 
 ```
@@ -67,6 +65,7 @@ sudo chmod +x /usr/local/bin/chromedriver
 Clone este repositório no seu Raspberry Pi.
 ```
 git clone https://github.com/bcosta-w/macro_rasp.git
+
 ```
 
 ```
