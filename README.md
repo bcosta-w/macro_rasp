@@ -66,7 +66,7 @@ sudo chmod +x /usr/local/bin/chromedriver
 ### 5. Clonar o repositório do projeto
 Clone este repositório no seu Raspberry Pi.
 ```
-git clone https://github.com/seu-usuario/seu-projeto.git
+git clone [https://github.com/bcosta-w/macro_rasp.git]
 cd seu-projeto
 
 ```
@@ -96,7 +96,7 @@ Substitua seu-email@example.com e sua-senha pelas suas credenciais de login e ad
 Para rodar o script, execute o comando:
 
 ```
-python3 script.py
+python3 main.py
 
 ```
 
