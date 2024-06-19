@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import logging
+import pyautogui
 
 # Configurar o logger
 logging.basicConfig(filename='script_log.txt', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -66,6 +67,19 @@ def switch_tabs(driver):
     other_tab = driver.window_handles[0] if driver.window_handles[1] == current_tab else driver.window_handles[1]
     driver.switch_to.window(other_tab)
 
+def detect_and_handle_error(driver):
+    try:
+        # Adicionar o código para detectar o erro específico aqui
+        # Exemplo: Se o elemento de erro tiver o id "error-message"
+        error_element = driver.find_element(By.ID, "error-message")
+        if error_element.is_displayed():
+            logging.error("Erro detectado na tela. Fechando o erro.")
+            pyautogui.press('esc')  # Enviar a tecla 'Esc' para fechar o erro
+            time.sleep(2)  # Esperar um pouco para garantir que o erro foi fechado
+    except Exception as e:
+        # Se o elemento de erro não for encontrado, não fazer nada
+        pass
+
 options = Options()
 options.add_argument('--disable-gpu')
 options.add_argument('--no-sandbox')
@@ -93,6 +107,7 @@ while True:
             try:
                 time.sleep(60)  # Tempo de visualização na aba atual (ajuste conforme necessário)
                 driver.get(urls[current_index])  # Recarregar a nova aba ou a mesma URL se não houver mais URLs na lista
+                detect_and_handle_error(driver)  # Verificar e fechar erros na tela
                 switch_tabs(driver)
                 current_index = (current_index + 1) % len(urls)
             except Exception as e:
