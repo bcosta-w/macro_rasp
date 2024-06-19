@@ -70,7 +70,7 @@ git clone https://github.com/bcosta-w/macro_rasp.git
 ```
 
 ```
-cd seu-projeto
+cd macro_rasp
 
 ```
 
