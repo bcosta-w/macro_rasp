@@ -1,0 +1,20 @@
+# Ignore arquivos e diretórios gerados automaticamente
+__pycache__/
+venv/
+
+# Arquivos de log
+logs/
+
+# Arquivos de ambiente e configuração
+.env
+config.ini
+config.txt
+
+# Arquivos de dados temporários ou gerados
+*.csv
+*.xlsx
+
+# Arquivos de build e distribuição
+build/
+dist/
+*.egg-info/
