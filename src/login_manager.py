@@ -8,7 +8,7 @@ import logging
 def login(driver, email, password):
     try:
         # Acessar a página de login
-        driver.get("https://grupowtec.us.qlikcloud.com/single/?appid=57891e3e-7901-407c-a1f2-f0e5668c265f&sheet=932f8724-a761-4cf0-9354-168ea942d2c9&theme=card&opt=nointeraction,noselections&identity=preview")
+        driver.get("https://grupowtec.us.qlikcloud.com")
 
         # Esperar até que os campos de login estejam presentes e visíveis
         wait = WebDriverWait(driver, 30)

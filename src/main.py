@@ -2,23 +2,26 @@ import time
 import logging
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from config_reader import read_config
 from login_manager import login
 from tab_manager import open_two_tabs, switch_tabs
 
 # Configurar o logger
-logging.basicConfig(filename='../logs/script_log.txt', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename='src/logs/script_log.txt', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def main():
     options = Options()
-    options.add_argument('--disable-gpu')
+    options.add_argument('--start-maximized')
     options.add_argument('--no-sandbox')
+
+    log_path = 'src/logs/chromedriver.log'
 
     while True:
         driver = webdriver.Chrome(options=options)
         try:
             # Ler as configurações e as URLs das páginas a partir do arquivo de configuração
-            config, urls = read_config('../config/config.txt')
+            config, urls = read_config('config/config.txt')
             email = config.get('email')
             password = config.get('password')
 
