@@ -1,5 +1,0 @@
-email=qlik@prestoorganiza.com.br
-password=Comerc@90
-https://grupowtec.us.qlikcloud.com/single/?appid=7107d4c7-fef4-4a5a-9559-b1f477cc7363&sheet=f7c8f9bc-6168-4125-9d0a-57953982e4d8&theme=card&opt=nointeraction,noselections&identity=preview
-https://grupowtec.us.qlikcloud.com/single/?appid=7107d4c7-fef4-4a5a-9559-b1f477cc7363&sheet=7f0d8284-7bf8-489f-968f-a2daa7325a69&theme=card&opt=nointeraction,noselections&identity=preview
-https://grupowtec.us.qlikcloud.com/single/?appid=7107d4c7-fef4-4a5a-9559-b1f477cc7363&sheet=7f0d8284-7bf8-489f-968f-a2daa7325a69&theme=card&opt=nointeraction,noselections&identity=preview
