@@ -1,8 +1,9 @@
-import time
-import logging
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+import logging
+from log_manager import log_error, log_warn, log_info
+import time
 from config_reader import read_config
 from login_manager import login
 from tab_manager import open_two_tabs, switch_tabs
@@ -15,13 +16,15 @@ def main():
     options.add_argument('--start-maximized')
     options.add_argument('--no-sandbox')
 
-    log_path = 'src/logs/chromedriver.log'
+    # Definir o caminho para o chromedriver e ativar os logs
+    service = Service('/usr/bin/chromedriver', log_path='src/logs/chromedriver.log')
+    service.start()
 
     while True:
-        driver = webdriver.Chrome(options=options)
+        driver = webdriver.Chrome(options=options, service=service)
         try:
             # Ler as configurações e as URLs das páginas a partir do arquivo de configuração
-            config, urls = read_config('config/config.txt')
+            config, urls = read_config('src/config/config.txt')
             email = config.get('email')
             password = config.get('password')
 
@@ -29,24 +32,26 @@ def main():
             if not login(driver, email, password):
                 raise Exception("Falha ao realizar o login inicial.")
 
+            log_info("Login realizado com sucesso.")
+
             # Loop para realizar ações periódicas
             current_index = 0
             open_two_tabs(driver, urls, current_index)
 
             while True:
                 try:
-                    time.sleep(10)  # Tempo de visualização na aba atual (ajuste conforme necessário)
+                    time.sleep(60)  # Tempo de visualização na aba atual (ajuste conforme necessário)
                     driver.get(urls[current_index])  # Recarregar a nova aba ou a mesma URL se não houver mais URLs na lista
                     switch_tabs(driver)
                     current_index = (current_index + 1) % len(urls)
                 except Exception as e:
-                    logging.error(f"Erro ao acessar {urls[current_index]}: {e}")
-                    logging.info("Tentando relogar e acessar novamente...")
+                    log_error(f"Erro ao acessar {urls[current_index]}: {e}")
+                    log_info("Tentando relogar e acessar novamente...")
                     if not login(driver, email, password):
-                        logging.error("Falha ao relogar.")
+                        log_error("Falha ao relogar.")
                         break
         except Exception as e:
-            logging.error(f"Erro inesperado: {e}")
+            log_error(f"Erro inesperado: {e}")
         finally:
             # Fechar o navegador
             driver.quit()

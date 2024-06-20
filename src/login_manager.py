@@ -2,8 +2,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from log_manager import setup_logger, log_error, log_warn, log_info
 import time
-import logging
 
 def login(driver, email, password):
     try:
@@ -22,9 +22,9 @@ def login(driver, email, password):
 
         # Aguardar o carregamento da página após o login
         time.sleep(20)
-
+        log_error("Ocorreu um erro durante o login.")
     except Exception as e:
-        logging.error(f"Erro durante o login: {e}")
+        log_error(f"Erro durante o login: {e}")
         return False
     
     return True
