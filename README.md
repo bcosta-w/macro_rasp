@@ -55,10 +55,8 @@ sudo apt install chromium-browser
 Baixe o ChromeDriver compatível com a versão do seu Chromium.
 
 ```
-wget https://chromedriver.storage.googleapis.com/$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
-unzip chromedriver_linux64.zip
-sudo mv chromedriver /usr/local/bin/
-sudo chmod +x /usr/local/bin/chromedriver
+sudo apt install chromium-chromedriver
+
 
 
 ```
@@ -66,8 +64,12 @@ sudo chmod +x /usr/local/bin/chromedriver
 ### 5. Clonar o repositório do projeto
 Clone este repositório no seu Raspberry Pi.
 ```
-git clone https://github.com/seu-usuario/seu-projeto.git
-cd seu-projeto
+git clone https://github.com/bcosta-w/macro_rasp.git
+
+```
+
+```
+cd macro_rasp
 
 ```
 
@@ -96,7 +98,7 @@ Substitua seu-email@example.com e sua-senha pelas suas credenciais de login e ad
 Para rodar o script, execute o comando:
 
 ```
-python3 script.py
+python3 main.py
 
 ```
 
