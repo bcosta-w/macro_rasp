@@ -1,4 +1,4 @@
-from log_manager import log_error, log_warn, log_info
+from log_manager import log_error, log_info
 
 def read_config(file_path):
     try:
@@ -23,4 +23,3 @@ def read_config(file_path):
     except Exception as e:
         log_error(f"Erro ao ler o arquivo de configuração: {e}")
         return {}, []
-

@@ -1,63 +1,101 @@
+# src/main.py
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 import logging
-from log_manager import log_error, log_warn, log_info
+import threading
+from gui_manager import App
+from log_manager import log_error, log_info
 import time
 from config_reader import read_config
 from login_manager import login
 from tab_manager import open_two_tabs, switch_tabs
+import tkinter as tk
 
 # Configurar o logger
 logging.basicConfig(filename='src/logs/script_log.txt', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def main():
-    options = Options()
-    options.add_argument('--start-maximized')
-    options.add_argument('--no-sandbox')
+class SeleniumAutomator:
+    def __init__(self, gui_app):
+        self.gui_app = gui_app
+        self.running = False
+        self.driver = None
 
-    # Definir o caminho para o chromedriver e ativar os logs
-    service = Service('/usr/bin/chromedriver', log_path='src/logs/chromedriver.log')
-    service.start()
+    def start(self):
+        options = Options()
+        options.add_argument('--start-maximized')
+        options.add_argument('--no-sandbox')
+        service = Service('/usr/bin/chromedriver', log_path='src/logs/chromedriver.log')
+        service.start()
 
-    while True:
-        driver = webdriver.Chrome(options=options, service=service)
+        self.running = True
+        self.driver = webdriver.Chrome(options=options, service=service)
+
+        self.gui_app.update_progress(20)
+        self.gui_app.update_log("ChromeDriver iniciado...")
+
         try:
-            # Ler as configurações e as URLs das páginas a partir do arquivo de configuração
             config, urls = read_config('src/config/config.txt')
             email = config.get('email')
             password = config.get('password')
 
-            # Realizar login
-            if not login(driver, email, password):
+            self.gui_app.update_progress(40)
+            self.gui_app.update_log("Configurações carregadas...")
+
+            if not login(self.driver, email, password):
                 raise Exception("Falha ao realizar o login inicial.")
 
             log_info("Login realizado com sucesso.")
+            self.gui_app.update_progress(60)
+            self.gui_app.update_log("Login realizado com sucesso...")
 
-            # Loop para realizar ações periódicas
             current_index = 0
-            open_two_tabs(driver, urls, current_index)
+            open_two_tabs(self.driver, urls, current_index)
 
-            while True:
+            self.gui_app.update_progress(80)
+            self.gui_app.update_log("Abas abertas...")
+
+            while self.running:
                 try:
-                    time.sleep(60)  # Tempo de visualização na aba atual (ajuste conforme necessário)
-                    driver.get(urls[current_index])  # Recarregar a nova aba ou a mesma URL se não houver mais URLs na lista
-                    switch_tabs(driver)
+                    time.sleep(60)
+                    self.driver.get(urls[current_index])
+                    switch_tabs(self.driver)
                     current_index = (current_index + 1) % len(urls)
+                    self.gui_app.update_log(f"Acessando {urls[current_index]}...")
                 except Exception as e:
                     log_error(f"Erro ao acessar {urls[current_index]}: {e}")
-                    log_info("Tentando relogar e acessar novamente...")
-                    if not login(driver, email, password):
+                    self.gui_app.update_log(f"Erro ao acessar {urls[current_index]}: {e}")
+                    if not login(self.driver, email, password):
                         log_error("Falha ao relogar.")
+                        self.gui_app.update_log("Falha ao relogar.")
                         break
+            self.gui_app.update_progress(100)
+            self.gui_app.update_log("Sistema operacional...")
+
         except Exception as e:
             log_error(f"Erro inesperado: {e}")
         finally:
-            # Fechar o navegador
-            driver.quit()
+            self.driver.quit()
+            service.stop()
 
-        # Aguarde um pouco antes de reiniciar as rotinas
-        time.sleep(10)
+    def stop(self):
+        self.running = False
+        self.driver.quit()
+        self.service.stop()
+        self.gui_app.update_log(f"Sistema finalizado.")
 
 if __name__ == "__main__":
-    main()
+    root = tk.Tk()
+    app = App(root)
+
+    def start_automator():
+        app.start_system()
+
+    def stop_automator():
+        app.stop_system()
+
+    app.start_system = start_automator
+    app.stop_system = stop_automator
+
+    root.mainloop()
