@@ -1,5 +1,3 @@
-# src/gui_manager.py
-
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 from tkinter import ttk
@@ -17,6 +15,7 @@ class App:
         self.email = ""
         self.password = ""
         self.urls = []
+        self.times = []
         self.automator = None
 
         self.setup_ui()
@@ -55,6 +54,10 @@ class App:
         self.url_entry = ttk.Entry(self.urls_frame, width=50)
         self.url_entry.pack(padx=10, pady=5)
 
+        ttk.Label(self.urls_frame, text="Tempo de permanência (s):").pack(padx=10, pady=5)
+        self.time_entry = ttk.Entry(self.urls_frame, width=50)
+        self.time_entry.pack(padx=10, pady=5)
+
         self.add_url_button = ttk.Button(self.urls_frame, text="Adicionar URL", command=self.add_url)
         self.add_url_button.pack(pady=10)
 
@@ -88,6 +91,7 @@ class App:
         self.config, self.urls = read_config(self.config_file)
         self.email = self.config.get('email', '')
         self.password = self.config.get('password', '')
+        self.times = self.config.get('times', [0] * len(self.urls))
 
         self.email_entry.insert(0, self.email)
         self.password_entry.insert(0, self.password)
@@ -102,31 +106,35 @@ class App:
 
     def add_url(self):
         new_url = self.url_entry.get()
-        if new_url:
+        new_time = self.time_entry.get()
+        if new_url and new_time.isdigit():
             self.urls.append(new_url)
+            self.times.append(int(new_time))
             self.refresh_url_list()
             self.save_config()
             self.url_entry.delete(0, tk.END)
+            self.time_entry.delete(0, tk.END)
 
     def remove_url(self, event):
         selected_index = self.url_listbox.curselection()
         if selected_index:
             del self.urls[selected_index[0]]
+            del self.times[selected_index[0]]
             self.refresh_url_list()
             self.save_config()
 
     def refresh_url_list(self):
         self.url_listbox.delete(0, tk.END)
-        for url in self.urls:
-            self.url_listbox.insert(tk.END, url)
+        for url, time in zip(self.urls, self.times):
+            self.url_listbox.insert(tk.END, f"{url} - {time}s")
 
     def save_config(self):
         try:
             with open(self.config_file, 'w') as file:
                 file.write(f"email={self.email}\n")
                 file.write(f"password={self.password}\n")
-                for url in self.urls:
-                    file.write(url + '\n')
+                for url, time in zip(self.urls, self.times):
+                    file.write(f"{url},{time}\n")
             log_info("Configuração salva com sucesso.")
         except Exception as e:
             log_error(f"Erro ao salvar configuração: {e}")
@@ -151,13 +159,12 @@ class App:
             self.automator.stop()
             self.progress['value'] = 0
             self.update_log("Sistema parado.")
-            # Remover todos os logs, exceto logs de erro
             self.clear_logs()
 
     def update_log(self, message):
         self.log_text.configure(state='normal')
         self.log_text.insert(tk.END, message + '\n')
-        self.log_text.see(tk.END)  # Scroll para o fim do texto
+        self.log_text.see(tk.END)
         self.log_text.configure(state='disabled')
 
     def clear_logs(self):
