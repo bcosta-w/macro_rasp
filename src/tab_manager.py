@@ -1,4 +1,4 @@
-from log_manager import log_error, log_warn, log_info
+from log_manager import log_error, log_info
 
 def open_two_tabs(driver, urls, index):
     try:
