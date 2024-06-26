@@ -30,11 +30,3 @@ def login(driver, email, password):
     
     return True
 
-def check_login_status(driver):
-    try:
-        # Verificar se há algum elemento específico que indique que o usuário está logado
-        wait = WebDriverWait(driver, 10)
-        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, ".user-profile")))
-        return True
-    except Exception:
-        return False

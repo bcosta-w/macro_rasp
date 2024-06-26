@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.service import Service
 import logging
 import time
 from config_reader import read_config
-from login_manager import login, check_login_status
+from login_manager import login
 from tab_manager import open_two_tabs, switch_tabs
 from log_manager import log_error, log_info
 from error_handler import check_for_errors
@@ -16,7 +16,6 @@ logging.basicConfig(filename='src/logs/script_log.txt', level=logging.ERROR, for
 class SeleniumAutomator:
     def __init__(self):
         self.running = False
-        self.driver = None
         self.service = Service('/usr/bin/chromedriver', log_path='src/logs/chromedriver.log')
 
     def start(self):
@@ -67,9 +66,6 @@ class SeleniumAutomator:
 
                         if check_for_errors(self.driver):
                             raise Exception("Erro detectado na tela.")
-
-                        if not check_login_status(self.driver):
-                            raise Exception("Usuário deslogado. Reiniciando o login.")
 
                     except Exception as e:
                         log_error(f"Erro ao acessar {urls[current_index]}: {e}")
