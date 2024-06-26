@@ -7,6 +7,7 @@ from config_reader import read_config
 from login_manager import login
 from tab_manager import open_two_tabs, switch_tabs
 from log_manager import log_error, log_info
+from error_handler import check_for_errors
 
 # Configurar o logger
 logging.basicConfig(filename='src/logs/script_log.txt', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -29,42 +30,58 @@ class SeleniumAutomator:
         log_info("ChromeDriver iniciado...")
 
         try:
-            config, urls = read_config('src/config/config.txt')
-            email = config.get('email')
-            password = config.get('password')
-            time_per_url = config.get('time', 60)  # Default to 60 seconds if no time provided
-
-            log_info("Configurações carregadas...")
-
-            if not login(self.driver, email, password):
-                raise Exception("Falha ao realizar o login inicial.")
-
-            log_info("Login realizado com sucesso.")
-
-            current_index = 0
-            open_two_tabs(self.driver, urls, current_index)
-
-            log_info("Abas abertas...")
-
-            while self.running:
-                try:
-                    time.sleep(time_per_url)
-                    switch_tabs(self.driver)
-                    current_index = (current_index + 1) % len(urls)
-                    log_info(f"Acessando {urls[current_index]}...")
-                except Exception as e:
-                    log_error(f"Erro ao acessar {urls[current_index]}: {e}")
-                    if not login(self.driver, email, password):
-                        log_error("Falha ao relogar.")
-                        break
-
-            log_info("Sistema operacional...")
-
+            self.run_automation_cycle()
         except Exception as e:
             log_error(f"Erro inesperado: {e}")
         finally:
             if self.driver:
                 self.driver.quit()
+
+    def run_automation_cycle(self):
+        while self.running:
+            try:
+                config, urls = read_config('src/config/config.txt')
+                email = config.get('email')
+                password = config.get('password')
+                time_per_url = config.get('time', 10)  # Default to 60 seconds if no time provided
+
+                log_info("Configurações carregadas...")
+
+                if not login(self.driver, email, password):
+                    raise Exception("Falha ao realizar o login inicial.")
+
+                log_info("Login realizado com sucesso.")
+
+                current_index = 0
+                open_two_tabs(self.driver, urls, current_index)
+
+                log_info("Abas abertas...")
+
+                while self.running:
+                    try:
+                        time.sleep(time_per_url)
+                        switch_tabs(self.driver)
+                        current_index = (current_index + 1) % len(urls)
+                        log_info(f"Acessando {urls[current_index]}...")
+
+                        if check_for_errors(self.driver):
+                            raise Exception("Erro detectado na tela.")
+
+                    except Exception as e:
+                        log_error(f"Erro ao acessar {urls[current_index]}: {e}")
+                        log_info("Reiniciando o ciclo de automação...")
+                        break
+
+                log_info("Sistema operacional...")
+
+            except Exception as e:
+                log_error(f"Erro inesperado: {e}")
+            finally:
+                if self.driver:
+                    self.driver.quit()
+                if self.running:
+                    log_info("Reiniciando o navegador...")
+                    self.driver = webdriver.Chrome(options=Options().add_argument('--start-maximized').add_argument('--no-sandbox'), service=self.service)
 
     def stop(self):
         self.running = False
