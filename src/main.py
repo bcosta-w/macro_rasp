@@ -1,10 +1,11 @@
+# src/main.py
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 import logging
 import time
 from config_reader import read_config
-from login_manager import login
+from login_manager import login, check_login_status
 from tab_manager import open_two_tabs, switch_tabs
 from log_manager import log_error, log_info
 from error_handler import check_for_errors
@@ -40,7 +41,7 @@ class SeleniumAutomator:
     def run_automation_cycle(self):
         while self.running:
             try:
-                config, urls = read_config('src/config/config.txt')
+                config, urls = read_config('src/config/config.json')
                 email = config.get('email')
                 password = config.get('password')
                 time_per_url = config.get('time', 10)  # Default to 60 seconds if no time provided
@@ -67,6 +68,9 @@ class SeleniumAutomator:
                         if check_for_errors(self.driver):
                             raise Exception("Erro detectado na tela.")
 
+                        if not check_login_status(self.driver):
+                            raise Exception("Usuário deslogado. Reiniciando o login.")
+
                     except Exception as e:
                         log_error(f"Erro ao acessar {urls[current_index]}: {e}")
                         log_info("Reiniciando o ciclo de automação...")
@@ -92,6 +96,9 @@ class SeleniumAutomator:
         log_info("Sistema finalizado.")
 
 if __name__ == "__main__":
+    from log_manager import setup_logger
+    setup_logger()
+    
     automator = SeleniumAutomator()
 
     try:
